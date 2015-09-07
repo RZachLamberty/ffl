@@ -30,7 +30,19 @@ logger = logging.getLogger(__name__)
 #   Main routine                #
 # ----------------------------- #
 
-def load_prediction_data(source=None):
+def load_prediction_data(source=None, postgres=True):
+    """ for items where we have postgres info, go there; otherwise do whatever
+        funky shit you need to do
+
+    """
+    if postgres:
+        return load_prediction_data_postgres(source)
+    else:
+        if source == 'fantasy_pros_adp':
+            return pd.read_csv('data/fantasypros_adp.csv')
+
+
+def load_prediction_data_postgres(source=None):
     """ load all the values where source == source (or no filtering, if source
         is None)
 

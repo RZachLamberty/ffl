@@ -31,44 +31,44 @@ from math import ceil, floor
 pylab.close('All')
 
 
-#---------------------------#
+# ------------------------- #
 #   Module Constants        #
-#---------------------------#
+# ------------------------- #
 
-#LEAGUE_TEAMS = pd.DataFrame(
-#    [
-#        ['CL', 'Captain\'s Log', 'Dylan Thomson'],
-#        ['HPZ', 'Heavy Petting Zoo', 'Zach Lamberty'],
-#        ['ASS', 'Great White Sharts!', 'Jeff Miller'],
-#        ['HIT', 'I\'d Still Hit It', 'Collin Solberg'],
-#        ['JNZ', 'Just Noise', 'Ben Koch'],
-#        ['CFB', 'Chicken Fried Blumpkins', 'Brad Nicolai'],
-#        ['VEU', 'Very European Uppercuts', 'Jake Hillesheim'],
-#        ['GcR', 'Gotham City Rogues', 'Nick Igoe'],
-#        ['LMKS', 'DA Lil\' Mookies', 'Dana Kinsella'],
-#        ['FVT', 'Emergerd! Fertberl!', 'Andy Warmuth'],
-#        ['ST', 'Snail Trails', 'Michael Lubke'],
-#        ['BCB', 'Brew City Bruisers', 'Matt Hibberd'],
-#    ],
-#    columns=['code', 'full_name', 'owner']
-    #)
 LEAGUE_TEAMS = pd.DataFrame(
     [
-        ['Kavanagh'],
-        ['McCormick'],
-        ['Carpenter'],
-        ['Scott'],
-        ['Berry'],
-        ['Becquey'],
-        ['Kaiser'],
-        ['Joyner'],
-        ['Clay'],
-        ['Karabell'],
-        ['Yates'],
-        ['Harris'],
+        ['CL', 'Captain\'s Log', 'Dylan Thomson'],
+        ['HPZ', 'Heavy Petting Zoo', 'Zach Lamberty'],
+        ['ASS', 'Great White Sharts!', 'Jeff Miller'],
+        ['HIT', 'I\'d Still Hit It', 'Collin Solberg'],
+        ['JNZ', 'Just Noise', 'Ben Koch'],
+        ['CFB', 'Chicken Fried Blumpkins', 'Brad Nicolai'],
+        ['VEU', 'Very European Uppercuts', 'Jake Hillesheim'],
+        ['GcR', 'Gotham City Rogues', 'Nick Igoe'],
+        ['LMKS', 'DA Lil\' Mookies', 'Dana Kinsella'],
+        ['FVT', 'Emergerd! Fertberl!', 'Andy Warmuth'],
+        ['ST', 'Snail Trails', 'Michael Lubke'],
+        ['BCB', 'Brew City Bruisers', 'Matt Hibberd'],
     ],
-    columns=['code']
+    columns=['code', 'full_name', 'owner']
 )
+#LEAGUE_TEAMS = pd.DataFrame(
+#    [
+#        ['Kavanagh'],
+#        ['McCormick'],
+#        ['Carpenter'],
+#        ['Scott'],
+#        ['Berry'],
+#        ['Becquey'],
+#        ['Kaiser'],
+#        ['Joyner'],
+#        ['Clay'],
+#        ['Karabell'],
+#        ['Yates'],
+#        ['Harris'],
+#    ],
+#    columns=['code']
+    #)
 TEAM_LIST = sorted(LEAGUE_TEAMS.code.unique())
 
 POS_LIST = [
@@ -86,15 +86,15 @@ POS_LIST = [
 logger = logging.getLogger(__name__)
 
 
-#---------------------------#
+# ------------------------- #
 #   Live Draft Class        #
-#---------------------------#
+# ------------------------- #
 
 class DraftData():
     """ A class object to calculate draft data, who to pick, etc. """
-    def __init__(self):
+    def __init__(self, source='espn', postgres=False):
         self.drafthistory = []
-        self.data = ffldata.load_prediction_data(source='espn')
+        self.data = ffldata.load_prediction_data(source=source, postgres=postgres)
         self.update_replacement_value()
 
         #self.f1 = pylab.figure(1, figsize=[7.5, 5.5])
