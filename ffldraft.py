@@ -35,40 +35,40 @@ pylab.close('All')
 #   Module Constants        #
 #---------------------------#
 
-#LEAGUE_TEAMS = pd.DataFrame(
-#    [
-#        ['CL', 'Captain\'s Log', 'Dylan Thomson'],
-#        ['HPZ', 'Heavy Petting Zoo', 'Zach Lamberty'],
-#        ['ASS', 'Great White Sharts!', 'Jeff Miller'],
-#        ['HIT', 'I\'d Still Hit It', 'Collin Solberg'],
-#        ['JNZ', 'Just Noise', 'Ben Koch'],
-#        ['CFB', 'Chicken Fried Blumpkins', 'Brad Nicolai'],
-#        ['VEU', 'Very European Uppercuts', 'Jake Hillesheim'],
-#        ['GcR', 'Gotham City Rogues', 'Nick Igoe'],
-#        ['LMKS', 'DA Lil\' Mookies', 'Dana Kinsella'],
-#        ['FVT', 'Emergerd! Fertberl!', 'Andy Warmuth'],
-#        ['ST', 'Snail Trails', 'Michael Lubke'],
-#        ['BCB', 'Brew City Bruisers', 'Matt Hibberd'],
-#    ],
-#    columns=['code', 'full_name', 'owner']
-    #)
 LEAGUE_TEAMS = pd.DataFrame(
     [
-        ['Kavanagh'],
-        ['McCormick'],
-        ['Carpenter'],
-        ['Scott'],
-        ['Berry'],
-        ['Becquey'],
-        ['Kaiser'],
-        ['Joyner'],
-        ['Clay'],
-        ['Karabell'],
-        ['Yates'],
-        ['Harris'],
+        ['FDKK', 'Frog Disguised Killer Kittens', 'Dylan Thomson'],
+        ['ZLM', 'Zach Lives Matter', 'Zach Lamberty'],
+        ['ASS', 'Great White Sharts!', 'Jeff Miller'],
+        ['BJ', 'Blackjack and Hookers', 'Collin Solberg'],
+        ['JNZ', 'Just Noise', 'Ben Koch'],
+        ['CFB', 'Chicken Fried Blumpkins', 'Brad Nicolai'],
+        ['VEU', 'Very European Uppercuts', 'Jake Hillesheim'],
+        ['FURY', 'Doof Warriors', 'Nick Igoe'],
+        ['LMKS', 'DA Lil\' Mookies', 'Dana Kinsella'],
+        ['BUTT', 'BT FKR 4 LF', 'Andy Warmuth'],
+        ['ST', 'Snail Trails', 'Michael Lubke'],
+        ['BN', 'BROWN NOISES', 'Matt Hibberd'],
     ],
-    columns=['code']
+    columns=['code', 'full_name', 'owner']
 )
+#LEAGUE_TEAMS = pd.DataFrame(
+#    [
+#        ['Kavanagh'],
+#        ['McCormick'],
+#        ['Carpenter'],
+#        ['Scott'],
+#        ['Berry'],
+#        ['Becquey'],
+#        ['Kaiser'],
+#        ['Joyner'],
+#        ['Clay'],
+#        ['Karabell'],
+#        ['Yates'],
+#        ['Harris'],
+#    ],
+#    columns=['code']
+#)
 TEAM_LIST = sorted(LEAGUE_TEAMS.code.unique())
 
 POS_LIST = [
@@ -107,18 +107,18 @@ class DraftData():
     def get_player_interactive(self, allowDrafted=False):
         """ Allow the user to select a player by initials """
         # Prompt the user to choose who has been drafted and on which team
-        first = raw_input('First part of first name?\t').lower()
-        last = raw_input('First part of last name? \t').lower()
+        first = input('First part of first name?\t').lower()
+        last = input('First part of last name? \t').lower()
 
-        print '\n'
+        print('\n')
 
         names = self.data.playername.str.lower()
         matches = self.data[names.str.match(r'^{}.* {}.*'.format(first, last))]
         matches = matches[(matches.status_type == 'FA') | (allowDrafted)]
 
-        print matches[['playername', 'team']]
+        print(matches[['playername', 'team']])
 
-        ind = int(raw_input('which index is it? '))
+        ind = int(input('which index is it? '))
 
         try:
             return matches.loc[ind]
@@ -128,10 +128,10 @@ class DraftData():
 
     def get_team_interactive(self, leagueTeams=LEAGUE_TEAMS):
         """ Allow the user to select a team by team_id """
-        print '\n'
-        print leagueTeams
+        print('\n')
+        print(leagueTeams)
 
-        ind = int(raw_input('which index do you want? '))
+        ind = int(input('which index do you want? '))
 
         try:
             return leagueTeams.loc[ind]
@@ -180,8 +180,8 @@ class DraftData():
 
         """
         # make sure it's sorted
-        self.data.sort(
-            columns=['pos', 'pts_total', 'status_type'],
+        self.data.sort_values(
+            by=['pos', 'pts_total', 'status_type'],
             inplace=True
         )
 
@@ -190,8 +190,8 @@ class DraftData():
         self.data.loc[:, 'repl_val'] = g.transform(pd.Series.diff)
 
         # invert for calculating cumulative stats
-        self.data.sort(
-            columns=['pos', 'pts_total', 'status_type'],
+        self.data.sort_values(
+            by=['pos', 'pts_total', 'status_type'],
             ascending=[True, False, True],
             inplace=True
         )
