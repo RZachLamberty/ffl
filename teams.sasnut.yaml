@@ -1,0 +1,46 @@
+teams:
+  - code: FDKK
+    "full_name": 'Frog Disguised Killer Kittens'
+    owner: 'Dylan Thomson'
+  - code: ZLM
+    "full_name": 'Zach Lives Matter'
+    owner: 'Zach Lamberty'
+  - code: ASS
+    "full_name": 'Great White Sharts!'
+    owner: 'Jeff Miller'
+  - code: BJ
+    "full_name": 'Blackjack and Hookers'
+    owner: 'Collin Solberg'
+  - code: JNZ
+    "full_name": 'Just Noise'
+    owner: 'Ben Koch'
+  - code: CFB
+    "full_name": 'Chicken Fried Blumpkins'
+    owner: 'Brad Nicolai'
+  - code: VEU
+    "full_name": 'Very European Uppercuts'
+    owner: 'Jake Hillesheim'
+  - code: FURY
+    "full_name": 'Doof Warriors'
+    owner: 'Nick Igoe'
+  - code: LMKS
+    "full_name": "DA Lil' Mookies"
+    owner: 'Dana Kinsella'
+  - code: BUTT
+    "full_name": 'BT FKR 4 LF'
+    owner: 'Andy Warmuth'
+  - code: ST
+    "full_name": 'Snail Trails'
+    owner: 'Michael Lubke'
+  - code: BN
+    "full_name": 'BROWN NOISES'
+    owner: 'Matt Hibberd'
+positions:
+  - [QB]
+  - [RB]
+  - [RB, WR]
+  - [WR]
+  - [WR, TE]
+  - [TE]
+  - ['D/ST']
+  - [K]

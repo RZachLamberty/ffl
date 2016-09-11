@@ -1,0 +1,13 @@
+.bottom-buffer {
+    margin-bottom: 20px;
+}
+
+.centericon {
+    display: block;
+    text-align: center;
+}
+
+.cursoricon {
+    cursor: pointer;
+    cursor: hand;
+}

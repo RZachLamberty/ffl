@@ -19,9 +19,11 @@ import datetime
 import itertools
 import logging
 import os
+
 import pandas as pd
 import pylab
 import seaborn as sns
+import yaml
 
 import ffldata
 
@@ -35,52 +37,10 @@ pylab.close('All')
 #   Module Constants        #
 #---------------------------#
 
-LEAGUE_TEAMS = pd.DataFrame(
-    [
-        ['FDKK', 'Frog Disguised Killer Kittens', 'Dylan Thomson'],
-        ['ZLM', 'Zach Lives Matter', 'Zach Lamberty'],
-        ['ASS', 'Great White Sharts!', 'Jeff Miller'],
-        ['BJ', 'Blackjack and Hookers', 'Collin Solberg'],
-        ['JNZ', 'Just Noise', 'Ben Koch'],
-        ['CFB', 'Chicken Fried Blumpkins', 'Brad Nicolai'],
-        ['VEU', 'Very European Uppercuts', 'Jake Hillesheim'],
-        ['FURY', 'Doof Warriors', 'Nick Igoe'],
-        ['LMKS', 'DA Lil\' Mookies', 'Dana Kinsella'],
-        ['BUTT', 'BT FKR 4 LF', 'Andy Warmuth'],
-        ['ST', 'Snail Trails', 'Michael Lubke'],
-        ['BN', 'BROWN NOISES', 'Matt Hibberd'],
-    ],
-    columns=['code', 'full_name', 'owner']
-)
-#LEAGUE_TEAMS = pd.DataFrame(
-#    [
-#        ['Kavanagh'],
-#        ['McCormick'],
-#        ['Carpenter'],
-#        ['Scott'],
-#        ['Berry'],
-#        ['Becquey'],
-#        ['Kaiser'],
-#        ['Joyner'],
-#        ['Clay'],
-#        ['Karabell'],
-#        ['Yates'],
-#        ['Harris'],
-#    ],
-#    columns=['code']
-#)
-TEAM_LIST = sorted(LEAGUE_TEAMS.code.unique())
-
-POS_LIST = [
-    ('QB', ),
-    ('RB', ),
-    ('RB', 'WR'),
-    ('WR', ),
-    ('WR', 'TE'),
-    ('TE', ),
-    ('D/ST'),
-    ('K', ),
-]
+HERE = os.path.realpath(os.path.dirname(__file__))
+SASNUT = os.path.join(HERE, 'teams.sasnut.yaml')
+LAMBO = os.path.join(HERE, 'teams.lambo.yaml')
+DEMO = os.path.join(HERE, 'teams.demo.yaml')
 
 # logging
 logger = logging.getLogger(__name__)
@@ -92,7 +52,12 @@ logger = logging.getLogger(__name__)
 
 class DraftData():
     """ A class object to calculate draft data, who to pick, etc. """
-    def __init__(self):
+    def __init__(self, teamYaml=SASNUT):
+        # loading team info
+        self.teamYaml = teamYaml
+        self._teamdict = None
+        self._leagueteams = None
+
         self.drafthistory = []
         self.data = ffldata.load_prediction_data(source='espn')
         self.update_replacement_value()
@@ -103,7 +68,33 @@ class DraftData():
 
         #self.show_best_replacement_available()
 
+    # loading team info --------------------------------------------------------
+    @property
+    def teamdict(self):
+        if self._teamdict is None:
+            with open(self.teamYaml, 'r') as f:
+                self._teamdict = yaml.load(f)
+        return self._teamdict
+
+    @property
+    def leagueteams(self):
+        if self._leagueteams is None:
+            self._leagueteams = pd.DataFrame(self.teamdict['teams'])
+        return self._leagueteams
+
+    @property
+    def teamlist(self):
+        return sorted(self.leagueteams.code.unique())
+
+    @property
+    def positions(self):
+        return self.teamdict['positions']
+
     # Updating who has been drafted -- interactive -----------------------------
+    @property
+    def undrafted(self):
+        return self.data[self.data.status_type == 'FA']
+
     def get_player_interactive(self, allowDrafted=False):
         """ Allow the user to select a player by initials """
         # Prompt the user to choose who has been drafted and on which team
@@ -126,15 +117,15 @@ class DraftData():
             logger.error("that is an invalid index! try again!")
             return None
 
-    def get_team_interactive(self, leagueTeams=LEAGUE_TEAMS):
+    def get_team_interactive(self):
         """ Allow the user to select a team by team_id """
         print('\n')
-        print(leagueTeams)
+        print(self.leagueteams)
 
         ind = int(input('which index do you want? '))
 
         try:
-            return leagueTeams.loc[ind]
+            return self.leagueteams.loc[ind]
         except KeyError:
             logger.error("that is an invalid index! try again!")
             return None
@@ -152,7 +143,7 @@ class DraftData():
         player = self.get_player_interactive(allowDrafted=True)
         self.been_drafted(player, None)
 
-    def been_drafted(self, player, team, poslist=POS_LIST, updateplots=True):
+    def been_drafted(self, player, team, updateplots=True):
         """ Update the prediction data to indicate a draft """
         if team is not None:
             self.data.loc[player.name, 'status_type'] = team.code
@@ -230,7 +221,22 @@ class DraftData():
         logger.debug("Displaying")
         return f
 
-    def state_of_draft(self, poslist=POS_LIST):
+    def plotly_best_replacement_available(self, N=25):
+        """ create a json-able object that can be plotted with plotly.js """
+        g = self.data[self.data.status_type == 'FA'].groupby('pos')
+        return [
+            {
+                'x': group.head(N).cum_count.values.tolist(),
+                'y': group.head(N).cum_repl_val.values.tolist(),
+                'text': group.head(N).playername.values.tolist(),
+                'type': 'scatter',
+                'mode': 'lines+markers',
+                'name': '{}: {}'.format(pos, group.iloc[0].playername)
+            }
+            for (pos, group) in g
+        ]
+
+    def state_of_draft(self):
         """ Create an N-team panelled histogram plot which shows how each team
             is faring relative to the median value at each position, as well as
             how that would change if the best X is chosen in this next draft.
@@ -244,7 +250,7 @@ class DraftData():
         positions = self.data.pos.unique()
 
         # list of all teams who have made draft picks so far
-        teamSummary = self.team_draft_summary(poslist)
+        teamSummary = self.team_draft_summary(self.positions)
         starters = teamSummary.loc[teamSummary.starting_pos.notnull()]
 
         # Total
@@ -280,7 +286,7 @@ class DraftData():
             left=0.04, bottom=0.06, right=0.98, top=0.95, hspace=1.0
         )
 
-        poslistSpec = poslist + ['TOTAL']
+        poslistSpec = self.positions + ['TOTAL']
         lefts = [i for i in range(len(poslistSpec))]
         width = 0.4
         mids = [i + width for i in range(len(poslistSpec))]
@@ -314,7 +320,7 @@ class DraftData():
         logger.debug("Displaying")
         return f
 
-    def team_draft_summary(self, poslist=POS_LIST):
+    def team_draft_summary(self):
         """ Return a list of all drafted players, binned by positions (best
             available)
 
@@ -324,7 +330,7 @@ class DraftData():
         drafted = self.data[self.data.status_type != 'FA']
 
         for (team, roster) in drafted.groupby('status_type'):
-            tds[team] = self.best_lineup(roster, poslist)
+            tds[team] = self.best_lineup(roster, self.positions)
 
         return pd.concat(tds.values())
 
@@ -506,6 +512,22 @@ class DraftData():
         return f
 
     # draft history IO ---------------------------------------------------------
+    @property
+    def form_history(self):
+        """a version of history which can more easily be passed to a web form"""
+        return pd.DataFrame(
+            [
+                {
+                    'draftnum': i,
+                    'player_index': d['player'],
+                    'player_name': self.data.loc[d['player'], 'playername'],
+                    'team_index': d['team'],
+                    'team_name': self.leagueteams.loc[d['team'], 'name'],
+                }
+                for (i, d) in enumerate(self.drafthistory, 1)
+            ]
+        )
+
     def save_history(self, fname):
         with open(fname, 'wb') as f:
             c = csv.DictWriter(f, fieldnames=self.drafthistory[0].keys())
@@ -516,12 +538,18 @@ class DraftData():
         with open(fname, 'rb') as f:
             return list(csv.DictReader(f))
 
+    def draft_by_ids(self, pid, tid):
+        player = self.data.loc[pid]
+        if tid is None:
+            team = None
+        else:
+            team = self.leagueteams.loc[tid]
+        self.been_drafted(player, team, updateplots=False)
+
     def replay_draft(self, fname):
         hist = self.load_history(fname)
 
         for d in hist:
             pid = int(d['player'])
             tid = int(d['team'])
-            player = self.data.loc[pid]
-            team = LEAGUE_TEAMS.loc[tid]
-            self.been_drafted(player, team, updateplots=False)
+            self.draft_by_ids(pid, tid)

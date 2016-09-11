@@ -1,0 +1,70 @@
+teams:
+  - code: BBVR
+    name: Brandon Beavers
+    owner: Claire Lamberty
+  - code: MMT
+    name: Minnehaha Meme Team
+    owner: Grace Lambo
+  - code: LAMB
+    name: Wodda Kodda Shodda
+    owner: Todd Lamberty
+  - code: MAGA
+    name: "Make America Greg Again!"
+    owner: Greg Lamberty
+  - code: ZLM
+    name: Zach Lives Matter
+    owner: Ron Zach Lamberty
+  - code: LAMK
+    name: Lamberty Team
+    owner: aaron lamberty
+  - code: BFTR
+    name: Buck Futter
+    owner: Ron Lamberty
+  - code: LAMB
+    name: Team Lamberty
+    owner: Kenley Lamberty
+  - code: LAMB
+    name: Team Lamberty
+    owner: Kade Lamberty
+  - code: FPOCFresh
+    name: Prince of Champlin
+    owner: Vinny Lambo
+  - code: LAMB
+    name: Team Lamberty
+    owner: Hannah Lamberty
+  - code: LAMB
+    name: Team Lamberty
+    owner: null
+  - code: LAMB
+    name: Team Lamberty
+    owner: null
+  - code: LAMB
+    name: Team Lamberty
+    owner: null
+  - code: LLBP
+    name: "Lolo's Bullpen"
+    owner: Laurie Lamberty
+  - code: KEKW
+    name: Kensington Kweens
+    owner: Annalise Lamberty
+  - code: TM17
+    name: Team 17
+    owner: null
+  - code: TM18
+    name: Team 18
+    owner: null
+  - code: TM19
+    name: Team 19
+    owner: null
+  - code: TM20
+    name: Team 20
+    owner: null
+positions:
+  - [QB]
+  - [RB]
+  - [RB, WR]
+  - [WR]
+  - [WR, TE]
+  - [TE]
+  - ['D/ST']
+  - [K]

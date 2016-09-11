@@ -1,0 +1,9 @@
+<div id="playerDataContainer">
+    <table id="playerDataTable"
+           class="table table-striped table-bordered"
+           cellspacing="0"
+           width="100%"></table>
+    <script type="text/javascript">
+     draw_player_data_table('#playerDataTable', {{ g.ffldraft.data.to_json(orient='records') | safe }})
+    </script>
+</div>

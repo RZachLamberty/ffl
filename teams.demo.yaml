@@ -1,0 +1,22 @@
+teams:
+  - code: 'Kavanagh'
+  - code: 'McCormick'
+  - code: 'Carpenter'
+  - code: 'Scott'
+  - code: 'Berry'
+  - code: 'Becquey'
+  - code: 'Kaiser'
+  - code: 'Joyner'
+  - code: 'Clay'
+  - code: 'Karabell'
+  - code: 'Yates'
+  - code: 'Harris'
+positions:
+  - [QB]
+  - [RB]
+  - [RB, WR]
+  - [WR]
+  - [WR, TE]
+  - [TE]
+  - ['D/ST']
+  - [K]

@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block title %}FFL Interactive Draft Stats{% endblock %}
+
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+<div class="container">
+    <div class="row bottom-buffer"><h1>balla draft 9001</h1></div>
+    <div class="row bottom-buffer">
+        <div class="col-md-6">
+            {% include 'playerdata.html' %}
+        </div>
+        <div class="col-md-6">
+            <div class="row bottom-buffer">
+                {% include 'replacementplot.html' %}
+            </div>
+            <div class="row bottom-buffer">
+                {{ wtf.quick_form(draftform, action='/', button_map={'submit': 'success'}) }}
+            </div>
+            <div class="row bottom-buffer">
+                {% include 'drafthistory.html' %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
